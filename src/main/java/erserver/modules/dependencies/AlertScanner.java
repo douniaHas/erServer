@@ -1,5 +1,6 @@
 package erserver.modules.dependencies;
 
+import erserver.modules.dependencies.vendorpagersystem.AlertTransmitter;
 import erserver.modules.dependencies.vendorpagersystem.PagerTransport;
 import erserver.modules.testtypes.Patient;
 import erserver.modules.dependencies.vendorpagersystem.PagerSystem;
@@ -14,13 +15,22 @@ public class AlertScanner {
    private StaffAssignmentManager staffAssignmentManager;
    private InboundPatientSource inboundPatientSource;
    private ArrayList<Integer> criticalPatientNotificationsSent;
+   private AlertTransmitter transport;
 
    public AlertScanner(InboundPatientSource inboundPatientSource) {
+      this.transport = PagerSystem.getTransport();
       this.inboundPatientSource = inboundPatientSource;
       criticalPatientNotificationsSent = new ArrayList<>();
    }
 
-   //added ton conform to pluralsight code
+   //added to test transport methods
+   public AlertScanner(InboundPatientSource inboundPatientSource, AlertTransmitter transport) {
+      this.transport = transport;
+      this.inboundPatientSource = inboundPatientSource;
+      criticalPatientNotificationsSent = new ArrayList<>();
+   }
+
+   //added to conform to pluralsight code
    public AlertScanner(StaffAssignmentManager staffAssignmentManager, InboundPatientSource inboundPatientSource) {
       this.staffAssignmentManager = staffAssignmentManager;
       this.inboundPatientSource = inboundPatientSource;
@@ -42,14 +52,17 @@ public class AlertScanner {
 
    protected void alertForNewCriticalPatient(Patient patient) {
       try {
-         PagerTransport transport = PagerSystem.getTransport();
-         transport.initialize();
-         transport.transmitRequiringAcknowledgement(ADMIN_ON_CALL_DEVICE, "New inbound critical patient: " +
-            patient.getTransportId());
+         transmitAck(patient, transport);
          criticalPatientNotificationsSent.add(patient.getTransportId());
       } catch (Throwable t) {
          System.out.println("Failed attempt to use pager system to device " + ADMIN_ON_CALL_DEVICE);
       }
+   }
+
+   private void transmitAck(Patient patient, AlertTransmitter transport) {
+      transport.initialize();
+      transport.transmitRequiringAcknowledgement(ADMIN_ON_CALL_DEVICE, "New inbound critical patient: " +
+         patient.getTransportId());
    }
 
 }

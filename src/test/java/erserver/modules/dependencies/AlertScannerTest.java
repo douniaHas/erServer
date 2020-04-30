@@ -1,5 +1,7 @@
 package erserver.modules.dependencies;
 
+import erserver.modules.dependencies.vendorpagersystem.AlertTransmitter;
+import erserver.modules.dependencies.vendorpagersystem.PagerTransport;
 import erserver.modules.testtypes.Patient;
 import org.junit.Test;
 
@@ -33,6 +35,25 @@ public class AlertScannerTest {
         alertScanner.scan();
 
         assertEquals(1,alertScanner.getAlertFor().size());
+    }
+
+    /**
+     * Here we want to test the call of our transport system and akc alerts.
+     * We have to make the dependency visible in the constructor so that we can test double it for this test sake
+     * so we create a common interface for the transport test double and real impl
+     * Then we override the behavior for test double and test it by creating lists. 
+     */
+    @Test
+    public void shouldTransportAck(){
+        InboundPatientTestDouble inboundDouble = new InboundPatientTestDouble();
+        inboundDouble.simulateNewInboundPatient(createPatient(2, Priority.YELLOW, "heart arrhythmia"));
+        PagerTransportTestDouble pagerTransportTestDouble = new PagerTransportTestDouble();
+
+        AlertScanner alertScanner = new AlertScanner(inboundDouble, pagerTransportTestDouble);
+        alertScanner.scan();
+
+        assertEquals(0,pagerTransportTestDouble.getAlertsReceived().size());
+        assertEquals(1,pagerTransportTestDouble.getAlertsRequiringAckReceived().size());
     }
 
     private Patient createPatient(int transportId, Priority priority, String condition) {

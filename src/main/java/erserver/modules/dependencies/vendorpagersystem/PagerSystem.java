@@ -6,7 +6,7 @@ public final class PagerSystem {
         return new PagerTransport();
     }
 
-    public static void closeTransport(PagerTransport transport) {
+    public static void closeTransport(AlertTransmitter transport) {
         throw new RuntimeException("represents a vendor class requiring install on server");
     }
 
