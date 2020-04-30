@@ -29,7 +29,11 @@ public class Patient {
    }
 
    public ChildClassification getChildClassification() {
-      return ChildClassification.calculate(birthDate, LocalDate.now());
+      return ChildClassification.calculate(birthDate, getSystemCurrentDate());
+   }
+
+   public LocalDate getSystemCurrentDate() {
+      return LocalDate.now();
    }
 
    public String getName() {

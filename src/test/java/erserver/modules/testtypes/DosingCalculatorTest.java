@@ -18,11 +18,21 @@ public class DosingCalculatorTest {
         dosingCalculator = new DosingCalculator();
         patient = new Patient();
     }
+
     @Ignore
     @Test
     public void returnsCorrectDosesForNeonate() {
         patient.setBirthDate(LocalDate.now().minusMonths(1));
         String singleDose = dosingCalculator.getRecommendedSingleDose(patient, "Tylenol Oral Suspension");
+        assertEquals("0", singleDose);
+    }
+
+    @Test
+    public void neonate_should_not_receive_dose() {
+        PatientTestDouble patientTestDouble = new PatientTestDouble();
+        patientTestDouble.setBirthDate(LocalDate.of(2016, 2, 28));
+        patientTestDouble.setCurrent(LocalDate.of(2016, 3, 28));
+        String singleDose = dosingCalculator.getRecommendedSingleDose(patientTestDouble, "Tylenol Oral Suspension");
         assertEquals("0", singleDose);
     }
 

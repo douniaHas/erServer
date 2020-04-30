@@ -41,7 +41,7 @@ public class AlertScannerTest {
      * Here we want to test the call of our transport system and akc alerts.
      * We have to make the dependency visible in the constructor so that we can test double it for this test sake
      * so we create a common interface for the transport test double and real impl
-     * Then we override the behavior for test double and test it by creating lists. 
+     * Then we override the behavior for test double and test it by creating lists.
      */
     @Test
     public void shouldTransportAck(){
